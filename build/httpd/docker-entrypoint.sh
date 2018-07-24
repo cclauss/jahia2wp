@@ -2,6 +2,8 @@
 
 set -e
 
+export PATH=/usr/sbin:/sbin:$PATH
+
 cat > /etc/apache2/conf-available/dyn-vhost.conf <<EOF
 UseCanonicalName Off
 
@@ -43,12 +45,12 @@ sed -i "s/post_max_size = .*/post_max_size = 300M/" /etc/php/7.1/apache2/php.ini
 sed -i "s/upload_max_filesize = .*/upload_max_filesize = 300M/" /etc/php/7.1/cli/php.ini
 sed -i "s/post_max_size = .*/post_max_size = 300M/" /etc/php/7.1/cli/php.ini
 
-/usr/sbin/a2dissite 000-default
-/usr/sbin/a2enmod ssl
-/usr/sbin/a2enmod rewrite
-/usr/sbin/a2enmod vhost_alias
-/usr/sbin/a2enmod status
-/usr/sbin/a2enmod remoteip
-/usr/sbin/a2enconf dyn-vhost
+a2dissite 000-default
+a2enmod ssl
+a2enmod rewrite
+a2enmod vhost_alias
+a2enmod status
+a2enmod remoteip
+a2enconf dyn-vhost
 
-/usr/sbin/apache2ctl -DFOREGROUND
+exec apache2ctl -DFOREGROUND
