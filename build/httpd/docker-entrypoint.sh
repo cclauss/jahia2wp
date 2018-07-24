@@ -53,4 +53,11 @@ a2enmod status
 a2enmod remoteip
 a2enconf dyn-vhost
 
+
+if [ -d "/run/secrets/xdebug" ]; then
+    a2enmod xdebug
+else
+    a2dismod xdebug
+fi
+
 exec apache2ctl -DFOREGROUND
