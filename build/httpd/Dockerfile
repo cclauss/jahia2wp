@@ -31,6 +31,20 @@ RUN  apt-get -y update && \
     apt-get -y autoremove && \
     apt-get clean
 
+# Install xdebug using PECL, using the technique of
+# https://stackoverflow.com/a/35658633/435004 to reduce Docker layer
+# footprint (basically, we need to install then uninstall all the
+# development kit within the same RUN line)
+RUN set -e -x; \
+    dpkg --get-selections > /dpkg.state; \
+    apt -y install php7.1-dev pkg-php-tools; \
+    pecl install xdebug; \
+    dpkg --clear-selections; \
+    sed 's/install/hold/' < /dpkg.state | dpkg --set-selections; \
+    apt-get -y dselect-upgrade; \
+    dpkg --set-selections < /dpkg.state; \
+    rm /dpkg.state
+
 # directory for custom error pages
 RUN mkdir /var/www/error
 
